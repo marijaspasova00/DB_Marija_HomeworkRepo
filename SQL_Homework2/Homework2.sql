@@ -27,17 +27,51 @@ select distinct t.LastName as TeacherLastName, s.LastName as StudentLastName
 from Teacher t
 join Student s
 on t.ID = s.ID
+go
+
+select distinct LastName
+from (
+    select distinct LastName from Teacher
+    union
+    select distinct LastName from Student
+) as Names;
+go
 
 --Create Foreign key constraints from diagram or with script
-alter table Student
-add constraint FK_Student_Grade
-foreign key (StudentID) references dbo.Student
+alter table Grade
+add constraint FK_Student_Grade1
+foreign key (StudentID) references[dbo].[Student]([ID])
 go
+
+alter table Grade
+add constraint FK_Course_Grade
+foreign key (CourseID) references[dbo].[Course]([ID])
+go
+
+alter table Grade
+add constraint FK_Teacher_Grade
+foreign key (TeacherID) references[dbo].[Teacher]([ID])
+go
+
+
 
 --List all possible combinations of Courses names and AchievementType names that can be passed by student
 select c.Name as CourseName, ta.Name as AchivementTypeName
 from Course c
 cross join AchievementType ta
+go
+
+alter table GradeDetails
+drop constraint FK_Grade_GradeDetails
+
+alter table GradeDetails
+add constraint FK_Grade_GradeDetails
+foreign key (GradeID) references[dbo].[Grade]([ID])
+go
+
+alter table GradeDetails
+add constraint FK_AchivementType_GradeDetails
+foreign key (AchievementTypeID) references [dbo].[AchievementType]([ID])
 go
 
 --List all Teachers without exam Grade
